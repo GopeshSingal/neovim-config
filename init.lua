@@ -15,6 +15,9 @@ vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.smartindent = true
 
+-- Allow OS clipboard to sync with NeoVim
+vim.o.clipboard = "unnamedplus"
+
 vim.o.syntax = "enable"
 
 vim.o.ignorecase = true
@@ -79,19 +82,45 @@ vim.lsp.enable("tflint")
 
 -- Lua LSP (lua_ls)
 vim.lsp.config("lua_ls", {
-  settings = {
-    Lua = {
-      runtime = { version = "LuaJIT" },
-      diagnostics = { globals = { "vim" } },
-      workspace = {
-        library = vim.api.nvim_get_runtime_file("", true),
-        checkThirdParty = false,
-      },
-      telemetry = { enable = false },
+    settings = {
+        Lua = {
+            runtime = { version = "LuaJIT" },
+            diagnostics = { globals = { "vim" } },
+            workspace = {
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false,
+            },
+            telemetry = { enable = false },
+        },
     },
-  },
 })
 vim.lsp.enable("lua_ls")
+
+-- YAML LSP (yaml-language-server)
+vim.lsp.config("yamlls", {
+    cmd = { "yaml-language-server", "--stdio" },
+    settings = {
+        yaml = {
+            validate = true,
+            hover = true,
+            completion = true,
+            schemas = {
+                kubernetes = { "k8s/*.yaml", "k8s/*.yml", "*.k8s.yaml", "*.k8s.yml" },
+            },
+            schemaStore = { enable = true },
+        },
+    },
+})
+vim.lsp.enable("yamlls")
+
+-- Docker LSP (docker-language-server)
+vim.lsp.config("docker_language_server", {
+    cmd = { "docker-language-server", "start", "--stdio" },
+    filetypes = {
+        "dockerfile", "Dockerfile"
+    },
+})
+vim.lsp.enable("docker_language_server")
 
 ----- Keymapping ------
 
@@ -107,6 +136,7 @@ vim.keymap.set("n", "<Leader>k", vim.lsp.buf.hover, { desc = "Hover" })
 vim.keymap.set("n", "<Leader>gd", vim.lsp.buf.definition, { desc = "Goto definition" })
 vim.keymap.set("n", "<Leader>gr", vim.lsp.buf.references, { desc = "Goto references" })
 vim.keymap.set("n", "<Leader>gD", vim.lsp.buf.declaration, { desc = "Goto declaration" })
+vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, { desc = "Language format" })
 
 vim.keymap.set("n", "<Leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic" })
-
+vim.keymap.set("n", "<Esc>", "<cmd>noh<CR><Esc>", { desc = "Clear search highlights" })
