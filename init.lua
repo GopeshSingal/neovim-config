@@ -140,3 +140,15 @@ vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, { desc = "Language format"
 
 vim.keymap.set("n", "<Leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic" })
 vim.keymap.set("n", "<Esc>", "<cmd>noh<CR><Esc>", { desc = "Clear search highlights" })
+
+-- Comment / Uncommenting
+vim.keymap.set("n", "<leader>/", function()
+  local cs = vim.bo.commentstring:gsub("%%s", "")
+  vim.cmd("normal! I" .. cs .. " ")
+end, { desc = "Comment line" })
+
+vim.keymap.set("n", "<leader>?", function()
+  local cs = vim.bo.commentstring:gsub("%%s", ""):gsub("%s+$", "")
+  vim.cmd("normal! ^")
+  vim.cmd("normal! df" .. cs)
+end, { desc = "Uncomment line" })
