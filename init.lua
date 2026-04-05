@@ -79,6 +79,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.pack.add({
     "https://www.github.com/lewis6991/gitsigns.nvim",
     "https://www.github.com/ibhagwan/fzf-lua",
+    "https://www.github.com/echasnovski/mini.nvim",
 })
 
 -- GitSigns
@@ -141,6 +142,14 @@ end, { desc = "FZF Diagnostics Document" })
 vim.keymap.set("n", "<leader>fX", function()
 	require("fzf-lua").diagnostics_workspace()
 end, { desc = "FZF Diagnostics Workspace" })
+
+-- mini
+require("mini.comment").setup({})
+require("mini.indentscope").setup({})
+require("mini.notify").setup({})
+require("mini.pairs").setup({})
+require("mini.surround").setup({})
+require("mini.trailspace").setup({})
 
 -----------------------
 -- LSP Configuration --
