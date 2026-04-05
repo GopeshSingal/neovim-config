@@ -95,6 +95,32 @@ require("gitsigns").setup({
 	current_line_blame = false,
 })
 
+vim.keymap.set("n", "]h", function()
+	require("gitsigns").next_hunk()
+end, { desc = "Next git hunk" })
+vim.keymap.set("n", "[h", function()
+	require("gitsigns").prev_hunk()
+end, { desc = "Previous git hunk" })
+vim.keymap.set("n", "<leader>hs", function()
+	require("gitsigns").stage_hunk()
+end, { desc = "Stage hunk" })
+vim.keymap.set("n", "<leader>hr", function()
+	require("gitsigns").reset_hunk()
+end, { desc = "Reset hunk" })
+vim.keymap.set("n", "<leader>hp", function()
+	require("gitsigns").preview_hunk()
+end, { desc = "Preview hunk" })
+vim.keymap.set("n", "<leader>hb", function()
+	require("gitsigns").blame_line({ full = true })
+end, { desc = "Blame line" })
+vim.keymap.set("n", "<leader>hB", function()
+	require("gitsigns").toggle_current_line_blame()
+end, { desc = "Toggle inline blame" })
+vim.keymap.set("n", "<leader>hd", function()
+	require("gitsigns").diffthis()
+end, { desc = "Diff this" })
+
+-- FZF
 require("fzf-lua").setup({})
 
 vim.keymap.set("n", "<leader>ff", function()
@@ -203,3 +229,11 @@ require("blink.cmp").setup({
         implementation = "prefer_rust",
     },
 })
+
+vim.keymap.set("n", "<Leader>rn", vim.lsp.buf.rename, { desc = "Rename" })
+vim.keymap.set("n", "<Leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+vim.keymap.set("n", "<Leader>k", vim.lsp.buf.hover, { desc = "Hover" })
+vim.keymap.set("n", "<Leader>gd", vim.lsp.buf.definition, { desc = "Goto definition" })
+vim.keymap.set("n", "<Leader>gr", vim.lsp.buf.references, { desc = "Goto references" })
+vim.keymap.set("n", "<Leader>gD", vim.lsp.buf.declaration, { desc = "Goto declaration" })
+vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, { desc = "Language format" })
