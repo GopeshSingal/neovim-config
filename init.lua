@@ -1,154 +1,183 @@
-vim.o.number = true
-vim.o.relativenumber = true
+-----------------
+-- Vim Options --
+-----------------
+vim.o.termguicolors = true
+vim.o.winborder = "rounded"
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NonText", { bg = "none" })
-vim.o.winborder = "rounded"
+
+vim.o.number = true
+vim.o.relativenumber = true
 vim.o.signcolumn = "yes"
+
+vim.o.cursorline = true
+
 vim.o.wrap = false
+vim.o.scrolloff = 12
 
--- vim.opt.cursorline = true
--- vim.opt.cursorcolumn = true
-
+-- Tabbing
 vim.o.expandtab = true
 vim.o.shiftwidth = 4
 vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.smartindent = true
 
--- Allow OS clipboard to sync with NeoVim
-vim.o.clipboard = "unnamedplus"
-
-vim.o.syntax = "enable"
-
+-- Searching
 vim.o.ignorecase = true
-vim.o.incsearch = true
 vim.o.smartcase = true
 vim.o.hlsearch = true
+vim.o.incsearch = true
 
-vim.o.scrolloff = 4
-
--- Undo persistence
-local path = vim.fn.stdpath("cache") .. "/undo"
-vim.fn.mkdir(path, "p")
-vim.o.undodir = path
+-- Clipboard / Undo
+vim.o.clipboard = "unnamedplus"
+local undodir = vim.fn.stdpath("data") .. "/undo"
+if vim.fn.isdirectory(undodir) == 0 then
+    vim.fn.mkdir(undodir, "p")
+end
+vim.o.undodir = undodir
 vim.o.undofile = true
 
------ Language Server Protocols -----
+vim.opt.path:append("**")
 
--- Go LSP (gopls)
-vim.lsp.config("gopls", {
-    cmd = { "gopls" },
-    settings = {
-        gopls = {
-            gofumpt = true,
-            staticcheck = true,
-            analyses = {
-                unusedparams = true,
-                nilness = true,
-                unusedwrite = true,
-            },
-        },
-    },
-})
-vim.lsp.enable("gopls")
-
--- Python LSP (pyright)
-vim.lsp.config("pyright", {
-    settings = {
-        python = {
-            analysis = {
-                autoSearchPaths = true,
-                useLibraryCodeForTypes = true,
-                diagnosticMode = "openFilesOnly",
-            },
-        },
-    },
-})
-vim.lsp.enable("pyright")
-
--- Terraform LSP (terraform-ls)
-vim.lsp.config("terraformls", {
-    cmd = { "terraform-ls", "serve" },
-    filetypes = { "terraform", "terraform-vars" },
-})
-vim.lsp.enable("terraformls")
-
--- Terraform lint diagnostics (tflint)
-vim.lsp.config("tflint", {
-    cmd = { "tflint", "--langserver" },
-    filetypes = { "terraform", "terraform-vars" },
-})
-vim.lsp.enable("tflint")
-
--- Lua LSP (lua_ls)
-vim.lsp.config("lua_ls", {
-    settings = {
-        Lua = {
-            runtime = { version = "LuaJIT" },
-            diagnostics = { globals = { "vim" } },
-            workspace = {
-                library = vim.api.nvim_get_runtime_file("", true),
-                checkThirdParty = false,
-            },
-            telemetry = { enable = false },
-        },
-    },
-})
-vim.lsp.enable("lua_ls")
-
--- YAML LSP (yaml-language-server)
-vim.lsp.config("yamlls", {
-    cmd = { "yaml-language-server", "--stdio" },
-    settings = {
-        yaml = {
-            validate = true,
-            hover = true,
-            completion = true,
-            schemas = {
-                kubernetes = { "k8s/*.yaml", "k8s/*.yml", "*.k8s.yaml", "*.k8s.yml" },
-            },
-            schemaStore = { enable = true },
-        },
-    },
-})
-vim.lsp.enable("yamlls")
-
--- Docker LSP (docker-language-server)
-vim.lsp.config("docker_language_server", {
-    cmd = { "docker-language-server", "start", "--stdio" },
-    filetypes = {
-        "dockerfile", "Dockerfile"
-    },
-})
-vim.lsp.enable("docker_language_server")
-
------ Keymapping ------
-
+----------------
+-- Keymapping --
+----------------
 vim.g.mapleader = " "
-vim.g.maplocalleader = ","
+vim.g.localleader = ","
 
 vim.keymap.set("n", "<Leader>w", ":w<CR>", { desc = "Write buffer" })
 vim.keymap.set("n", "<Leader>q", ":q<CR>", { desc = "Quit buffer" })
 
-vim.keymap.set("n", "<Leader>rn", vim.lsp.buf.rename, { desc = "Rename" })
-vim.keymap.set("n", "<Leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-vim.keymap.set("n", "<Leader>k", vim.lsp.buf.hover, { desc = "Hover" })
-vim.keymap.set("n", "<Leader>gd", vim.lsp.buf.definition, { desc = "Goto definition" })
-vim.keymap.set("n", "<Leader>gr", vim.lsp.buf.references, { desc = "Goto references" })
-vim.keymap.set("n", "<Leader>gD", vim.lsp.buf.declaration, { desc = "Goto declaration" })
-vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, { desc = "Language format" })
+vim.keymap.set("n", "<Leader>c", ":nohlsearch<CR>", { desc = "Clear highlighted results" })
+vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 
-vim.keymap.set("n", "<Leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic" })
-vim.keymap.set("n", "<Esc>", "<cmd>noh<CR><Esc>", { desc = "Clear search highlights" })
+vim.keymap.set("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
+vim.keymap.set("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
 
--- Comment / Uncommenting
-vim.keymap.set("n", "<leader>/", function()
-  local cs = vim.bo.commentstring:gsub("%%s", "")
-  vim.cmd("normal! I" .. cs .. " ")
-end, { desc = "Comment line" })
+vim.keymap.set("n", "<leader>td", function()
+	vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle diagnostics" })
 
-vim.keymap.set("n", "<leader>?", function()
-  local cs = vim.bo.commentstring:gsub("%%s", ""):gsub("%s+$", "")
-  vim.cmd("normal! ^")
-  vim.cmd("normal! df" .. cs)
-end, { desc = "Uncomment line" })
+-------------------
+-- Auto Commands --
+-------------------
+local cfggroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
+
+-- Highlight yanked text
+vim.api.nvim_create_autocmd("TextYankPost", {
+    group = cfggroup,
+    desc = "Highlight text when yanking it",
+    callback = function()
+        vim.highlight.on_yank()
+    end,
+})
+
+-------------------------
+-- Plugin Installation --
+-------------------------
+vim.pack.add({
+    "https://www.github.com/lewis6991/gitsigns.nvim",
+})
+
+-- GitSigns
+require("gitsigns").setup({
+	signs = {
+		add = { text = "\u{2590}" }, -- ▏
+		change = { text = "\u{2590}" }, -- ▐
+		delete = { text = "\u{2590}" }, -- ◦
+		topdelete = { text = "\u{25e6}" }, -- ◦
+		changedelete = { text = "\u{25cf}" }, -- ●
+		untracked = { text = "\u{25cb}" }, -- ○
+	},
+	signcolumn = true,
+	current_line_blame = false,
+})
+
+-----------------------
+-- LSP Configuration --
+-----------------------
+vim.pack.add({
+	"https://github.com/neovim/nvim-lspconfig",
+	"https://github.com/mason-org/mason.nvim",
+	"https://github.com/mason-org/mason-lspconfig.nvim",
+	"https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
+	{
+		src = "https://github.com/saghen/blink.cmp",
+		version = "v.1.6.0"
+	},
+    "https://github.com/L3MON4D3/LuaSnip",
+})
+
+require("mason").setup()
+require("mason-lspconfig").setup()
+require("mason-tool-installer").setup({
+    ensure_installed = {
+        -- LSPs
+        "lua_ls",
+        "rust_analyzer",
+        -- Formatters / Linters
+        "stylua",
+
+    }
+})
+
+
+vim.lsp.config("lua_ls", {
+	settings = {
+		Lua = {
+			runtime = {
+				version = "LuaJIT",
+			},
+			diagnostics = {
+				globals = {
+					"vim",
+					"require",
+				},
+			},
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true),
+			},
+		},
+	},
+})
+
+vim.lsp.config("rust_analyzer", {
+    cmd = { "rust-analyzer" },
+    filetypes = { "rust" },
+    root_markers = { "Cargo.toml", "rust-project.json", ".git" },
+    settings = {
+        ["rust-analyzer"] = {
+            cargo = {
+                allFeatures = true,
+            },
+            checkOnSave = true,
+            check = {
+                command = "clippy",
+            },
+        },
+    },
+})
+
+require("blink.cmp").setup({
+    keymap = {
+        preset = "none",
+        ["<C-Space>"] = { "show", "hide" },
+        ["<CR>"] = { "accept", "fallback" },
+        ["<C-j>"] = { "select_next", "fallback" },
+        ["<C-k>"] = { "select_prev", "fallback" },
+        ["<Tab>"] = { "snippet_forward", "fallback" },
+        ["<S-Tab>"] = { "snippet_backward", "fallback" },
+    },
+    appearance = { nerd_font_variant = "mono" },
+    completion = { menu = { auto_show = true } },
+    sources = { default = { "lsp", "path", "buffer", "snippets" } },
+    snippets = {
+        expand = function(snippet)
+            require("luasnip").lsp_expand(snippet)
+        end,
+    },
+    fuzzy = {
+        implementation = "prefer_rust",
+    },
+})
