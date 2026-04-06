@@ -73,6 +73,16 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
+vim.api.nvim_create_autocmd("CursorHold", {
+    group = cfggroup,
+    callback = function()
+        vim.diagnostic.open_float(nil, {
+            focusable = false,
+            border = "rounded",
+            source = "always",
+        })
+    end,
+})
 -------------------------
 -- Plugin Installation --
 -------------------------
@@ -246,3 +256,4 @@ vim.keymap.set("n", "<Leader>gd", vim.lsp.buf.definition, { desc = "Goto definit
 vim.keymap.set("n", "<Leader>gr", vim.lsp.buf.references, { desc = "Goto references" })
 vim.keymap.set("n", "<Leader>gD", vim.lsp.buf.declaration, { desc = "Goto declaration" })
 vim.keymap.set("n", "<Leader>lf", vim.lsp.buf.format, { desc = "Language format" })
+vim.keymap.set("n", "<Leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic" })
