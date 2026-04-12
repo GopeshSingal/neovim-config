@@ -73,16 +73,16 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
-vim.api.nvim_create_autocmd("CursorHold", {
-    group = cfggroup,
-    callback = function()
-        vim.diagnostic.open_float(nil, {
-            focusable = false,
-            border = "rounded",
-            source = "always",
-        })
-    end,
-})
+-- vim.api.nvim_create_autocmd("CursorHold", {
+--     group = cfggroup,
+--     callback = function()
+--         vim.diagnostic.open_float(nil, {
+--             focusable = false,
+--             border = "rounded",
+--             source = "always",
+--         })
+--     end,
+-- })
 -------------------------
 -- Plugin Installation --
 -------------------------
@@ -90,6 +90,7 @@ vim.pack.add({
     "https://www.github.com/lewis6991/gitsigns.nvim",
     "https://www.github.com/ibhagwan/fzf-lua",
     "https://www.github.com/echasnovski/mini.nvim",
+    "https://www.github.com/folke/which-key.nvim",
 })
 
 -- GitSigns
@@ -107,10 +108,10 @@ require("gitsigns").setup({
 })
 
 vim.keymap.set("n", "]h", function()
-	require("gitsigns").next_hunk()
+	require("gitsigns").nav_hunk('next')
 end, { desc = "Next git hunk" })
 vim.keymap.set("n", "[h", function()
-	require("gitsigns").prev_hunk()
+	require("gitsigns").nav_hunt('prev')
 end, { desc = "Previous git hunk" })
 vim.keymap.set("n", "<leader>hs", function()
 	require("gitsigns").stage_hunk()
@@ -160,6 +161,13 @@ require("mini.notify").setup({})
 require("mini.pairs").setup({})
 require("mini.surround").setup({})
 require("mini.trailspace").setup({})
+
+-- which-key
+require("which-key").setup({
+  spec = {
+    { "<leader>s", group = "[S]earch", icon = { icon = "", color = "green", }, },
+  }
+})
 
 -----------------------
 -- LSP Configuration --
